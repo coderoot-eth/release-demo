@@ -1,13 +1,27 @@
 {
   "name": "@coderoot-eth/release-demo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny library released through CodeRoot: published with npm provenance, approved by a person, deployed only when verified.",
   "license": "Apache-2.0",
-  "repository": { "type": "git", "url": "git+https://github.com/coderoot-eth/release-demo.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderoot-eth/release-demo.git"
+  },
   "homepage": "https://github.com/coderoot-eth/release-demo#readme",
   "main": "index.js",
-  "files": ["index.js", "README.md", "LICENSE"],
-  "engines": { "node": ">=20" },
-  "scripts": { "test": "node --test" },
-  "publishConfig": { "access": "public", "provenance": true }
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }
