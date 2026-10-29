@@ -1,0 +1,51 @@
+# Deploys one published version of @coderoot-eth/release-demo, only when CodeRoot answers verified
+# for the exact bytes npm serves. Run it with the version to deploy; to move
+# back, run it with the previous good version.
+
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to deploy, e.g. 1.2.3"
+        required: true
+
+permissions: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: ""
+      - name: Fetch the published tarball
+        id: tarball
+        env:
+          PACKAGE: "@coderoot-eth/release-demo"
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/release"
+          npm pack "$PACKAGE@$VERSION" --pack-destination "$RUNNER_TEMP/release" --silent >/dev/null
+          file="$(ls "$RUNNER_TEMP"/release/*.tgz)"
+          echo "file=$file" >> "$GITHUB_OUTPUT"
+          echo "hash=sha256:$(sha256sum "$file" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: CodeRoot verify
+        uses: coderoot-eth/action@v1
+        with:
+          mode: verify
+          hash: ${{ steps.tarball.outputs.hash }}
+      # Runs only when the step above answered verified. Replace with the real deploy.
+      - name: Deploy
+        env:
+          PACKAGE: "@coderoot-eth/release-demo"
+          VERSION: ${{ inputs.version }}
+          FILE: ${{ steps.tarball.outputs.file }}
+          HASH: ${{ steps.tarball.outputs.hash }}
+        run: echo "deploying $PACKAGE@$VERSION ($HASH)"
